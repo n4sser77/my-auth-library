@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>User Registration</title>
 </head>
+
 <body>
   <h1>User Registration</h1>
   <form id="registrationForm">
@@ -31,15 +33,15 @@
 
     </div>
   </form>
-<style>
-  form {
-    margin: 20px;
-    margin-top: 40px;
-    padding: 20px;
-  }
-</style>
+  <style>
+    form {
+      margin: 20px;
+      margin-top: 40px;
+      padding: 20px;
+    }
+  </style>
   <script>
-    document.getElementById('registrationForm').addEventListener('submit', async function(event) {
+    document.getElementById('registrationForm').addEventListener('submit', async function (event) {
       event.preventDefault(); // Prevent the form from submitting normally
 
       const formData = new FormData(this); // Create FormData object from form
@@ -75,9 +77,10 @@
       }
     });
   </script>
-   <script>
+
+  <script>
     let message = document.getElementById('message');
-    document.getElementById('loginForm').addEventListener('submit', async function(event) {
+    document.getElementById('loginForm').addEventListener('submit', async function (event) {
       event.preventDefault(); // Prevent the form from submitting normally
 
       const formData = new FormData(this); // Create FormData object from form
@@ -105,13 +108,47 @@
         const response = await fetch('/auth/login', options); // Send POST request
         const data = await response.json(); // Parse JSON response
         console.log('login sent Successfully from client side:', data);
-        // Handle success, e.g., show success message, redirect, etc.
-        message.appendChild(document.createTextNode(`Hello ${userData?.username}`))
+        if (response.ok) {
+          // Handle success, e.g., show success message, redirect, etc.
+          message.textContent = `Hello ${userData.username}`;
+          localStorage.setItem('token', data.token);
+          await fetchProtectedResource();
+
+
+        }
+
       } catch (error) {
         console.error('login Error from client side:', error);
         // Handle error, e.g., show error message to user
       }
     });
   </script>
+
+  <script>
+    async function fetchProtectedResource() {
+      const token = localStorage.getItem('token');
+      console.log('Fetching protected resource with token:', token);
+
+      if(!token) {
+        console.error('Token not found in localstorage');
+        return;
+      }
+      const respons = await fetch('http://localhost:3000/api/protected', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      if (respons.ok) {
+        const data = await respons.json();
+        console.log('Protected data:', data);
+      } else {
+        console.error('Failed to fetch protected resource');
+      }
+    }
+  </script>
+
 </body>
+
 </html>

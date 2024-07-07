@@ -1,27 +1,27 @@
 const jwt = require('jsonwebtoken');
-const AuthService = requre('../AuthService');
-
-
-// replace with strong key, 
-// needs to be same as AuthService
-const SECRET_KEY = '1234';
+const SECRET_KEY = 'your_secret_key'; // Make sure this matches the secret key used in AuthService
 
 function authenticateToken(req, res, next) {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    if (!token) {
-        return res.sendStatus(401);
-    }
+    console.log('Received request to /api/protected');
+  const authHeader = req.headers['authorization'];
+    console.log('Raw auth Header:' + authHeader);
 
-    try {
-        const decoded = jwt.verify(token, SECRET_KEY);
-        req.user = decoded;
-        next();
-    } catch (error) {
-        return res.sendStatus(403);
-    }
+  const token = authHeader && authHeader.split(' ')[1];
+  console.log('Extracted Token:' + token)
+  //console.log(authHeader);
 
 
+  if (!token) {
+    return res.sendStatus(401); // Unauthorized
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.sendStatus(403); // Forbidden
+  }
 }
 
-module.exports = { authenticateToken };
+module.exports = authenticateToken; // Export the function directly

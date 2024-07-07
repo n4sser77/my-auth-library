@@ -37,7 +37,7 @@ class AuthService {
   }
   
 
-  async register(username, email, password) {
+  async register(username, email, password, role= 'user') {
     try {
       // Ensure users are loaded before adding a new user
       if (this.users.length === 0) {
