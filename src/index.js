@@ -4,12 +4,16 @@ const authenticateToken = require('./auth/middlewere/authMiddlewere.js')
 const session = require('express-session');
 const path = require('path');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 // Use CORS middleware
 
 
 const app = express();
 const PORT = 3000;
-app.use(cors());
+app.use(cors({origin: 'http://localhost:3000',
+  credentials: true}));
+app.use(cookieParser());
+
 // Middleware
 app.use(express.json());
 app.use(session({

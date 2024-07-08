@@ -18,7 +18,7 @@ router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   try {
     const { user, token } = await AuthService.login(username, password);
-    //res.cookie('token', token, {httpOnly: true, secure: true});
+    res.cookie('token', token, {httpOnly: true, secure: true});
     res.status(200).json({ user, token });
     console.log(`AuthController: User logged in succesfully user: ${user.username} , token: ${token} `)
 

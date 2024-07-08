@@ -40,6 +40,9 @@
       padding: 20px;
     }
   </style>
+
+  <!-- Link to the protected page -->
+  <a href="/api/protected">ADMIN PAGE</a>
   <script>
     document.getElementById('registrationForm').addEventListener('submit', async function (event) {
       event.preventDefault(); // Prevent the form from submitting normally
@@ -122,19 +125,39 @@
         // Handle error, e.g., show error message to user
       }
     });
-  </script>
 
-  <script>
     async function fetchProtectedResource() {
       const token = localStorage.getItem('token');
+      // Get the current time
+
+      let currentTime = new Date();
+
+      // Calculate the expiration time (current time + 10 seconds)
+      let expirationTime = new Date(currentTime.getTime() + 10 * 1000); // 10 seconds in milliseconds
+
+      // Format the expiration date according to the required format (RFC 1123)
+      let expirationString = expirationTime.toUTCString();
+
+      // Set the cookie with the calculated expiration time
+      document.cookie = `token=${token}; expires=${expirationString}; path=/; Secure; HttpOnly`;
+
+    
+
+      // Assuming 'data.token' contains the token received from the server
+      console.log(document.cookie);
+      console.log('cookie created');
+
+
+
       console.log('Fetching protected resource with token:', token);
 
-      if(!token) {
+      if (!token) {
         console.error('Token not found in localstorage');
         return;
       }
       const respons = await fetch('http://localhost:3000/api/protected', {
         method: 'GET',
+        credentials: 'include', // include credentials (cookies)
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
