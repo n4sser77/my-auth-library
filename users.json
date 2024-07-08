@@ -4,5 +4,11 @@
     "username": "emil",
     "email": "emil@gmail.com",
     "passwordHash": "$2a$10$XDycA7j227FJ8/WwaGn89.Pn8e5kuf/Fw4Alp2CA.lqnwZWMGeatS"
+  },
+  {
+    "id": "1720401072792",
+    "username": "nase",
+    "email": "nase@gmail.com",
+    "passwordHash": "$2a$10$YEe9Yhl6n.SwOI51blHXyuinIJ65dNb8iUPYBJVo0ebQeJH8SAQPO"
   }
 ]

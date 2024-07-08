@@ -33,6 +33,10 @@
 
     </div>
   </form>
+
+  <form id="logoutForm">
+    <button type="submit">Log Out</button>
+  </form>
   <style>
     form {
       margin: 20px;
@@ -82,6 +86,8 @@
   </script>
 
   <script>
+    let loggedIn;
+    
     let message = document.getElementById('message');
     document.getElementById('loginForm').addEventListener('submit', async function (event) {
       event.preventDefault(); // Prevent the form from submitting normally
@@ -93,6 +99,9 @@
         username: formData.get('username'),
         password: formData.get('password')
       };
+      if (loggedIn) {
+      message.innerText(`Hello ${}`)
+    }
 
       // Convert user data to JSON string
       const postData = JSON.stringify(userData);
@@ -113,9 +122,25 @@
         console.log('login sent Successfully from client side:', data);
         if (response.ok) {
           // Handle success, e.g., show success message, redirect, etc.
+          loggedIn = true;
           message.textContent = `Hello ${userData.username}`;
           localStorage.setItem('token', data.token);
-          await fetchProtectedResource();
+
+          let currentTime = new Date();
+
+          // Calculate the expiration time (current time + 10 seconds)
+          let expirationTime = new Date(currentTime.getTime() + 30 * 1000); // 10 seconds in milliseconds
+
+          // Format the expiration date according to the required format (RFC 1123)
+          let expirationString = expirationTime.toUTCString();
+          console.log(expirationString);
+
+          // Set the cookie with the calculated expiration time
+          document.cookie = `token=${data.token}; max-age=20; ;path=/; ; HttpOnly; SameSite`;
+          console.log('cookie created');
+          console.log(document.cookie);
+
+           fetchProtectedResource();
 
 
         }
@@ -128,26 +153,8 @@
 
     async function fetchProtectedResource() {
       const token = localStorage.getItem('token');
-      // Get the current time
-
-      let currentTime = new Date();
-
-      // Calculate the expiration time (current time + 10 seconds)
-      let expirationTime = new Date(currentTime.getTime() + 10 * 1000); // 10 seconds in milliseconds
-
-      // Format the expiration date according to the required format (RFC 1123)
-      let expirationString = expirationTime.toUTCString();
-
-      // Set the cookie with the calculated expiration time
-      document.cookie = `token=${token}; expires=${expirationString}; path=/; Secure; HttpOnly`;
-
-    
 
       // Assuming 'data.token' contains the token received from the server
-      console.log(document.cookie);
-      console.log('cookie created');
-
-
 
       console.log('Fetching protected resource with token:', token);
 
